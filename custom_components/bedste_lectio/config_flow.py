@@ -8,18 +8,20 @@ from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import (
-    IntegrationBlueprintApiClient,
-    IntegrationBlueprintApiClientAuthenticationError,
-    IntegrationBlueprintApiClientCommunicationError,
-    IntegrationBlueprintApiClientError,
+    BedsteLectioApiClient,
+    BedsteLectioApiClientAuthenticationError,
+    BedsteLectioApiClientCommunicationError,
+    BedsteLectioApiClientError,
 )
-from .const import DOMAIN, LOGGER
+from .const import CONF_SCHOOL, DOMAIN, LOGGER
 
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+class BedsteLectioFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for BedsteLectio."""
 
     VERSION = 1
+
+    schools: list[str] = []
 
     async def async_step_user(
         self,
@@ -32,14 +34,15 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 await self._test_credentials(
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
+                    school=user_input[CONF_SCHOOL],
                 )
-            except IntegrationBlueprintApiClientAuthenticationError as exception:
+            except BedsteLectioApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
                 _errors["base"] = "auth"
-            except IntegrationBlueprintApiClientCommunicationError as exception:
+            except BedsteLectioApiClientCommunicationError as exception:
                 LOGGER.error(exception)
                 _errors["base"] = "connection"
-            except IntegrationBlueprintApiClientError as exception:
+            except BedsteLectioApiClientError as exception:
                 LOGGER.exception(exception)
                 _errors["base"] = "unknown"
             else:
@@ -47,6 +50,15 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     title=user_input[CONF_USERNAME],
                     data=user_input,
                 )
+
+        if not self.schools:
+            client = BedsteLectioApiClient(
+                username="",
+                password="",
+                school="",
+                session=async_create_clientsession(self.hass),
+            )
+            self.schools = await client.async_get_schools()
 
         return self.async_show_form(
             step_id="user",
@@ -65,16 +77,21 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             type=selector.TextSelectorType.PASSWORD
                         ),
                     ),
+                    vol.Required(
+                        CONF_SCHOOL,
+                        default=(user_input or {}).get(CONF_SCHOOL),
+                    ): vol.In(self.schools),
                 }
             ),
             errors=_errors,
         )
 
-    async def _test_credentials(self, username: str, password: str) -> None:
+    async def _test_credentials(self, username: str, password: str, school: str) -> None:
         """Validate credentials."""
-        client = IntegrationBlueprintApiClient(
+        client = BedsteLectioApiClient(
             username=username,
             password=password,
+            school=school,
             session=async_create_clientsession(self.hass),
         )
-        await client.async_get_data()
+        await client.async_get_next_room()

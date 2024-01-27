@@ -1,0 +1,12 @@
+{
+  "domain": "bedste_lectio",
+  "name": "BedsteLectio",
+  "codeowners": [
+    "@JohnnyJTH"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/JohnnyJTH/BedsteLectioHA",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/JohnnyJTH/BedsteLectioHA/issues",
+  "version": "0.0.1"
+}

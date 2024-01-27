@@ -1,4 +1,3 @@
-"""Sample API Client."""
 from __future__ import annotations
 
 import asyncio
@@ -7,51 +6,58 @@ import socket
 import aiohttp
 import async_timeout
 
+from .const import BEDSTELECTIO_API_URL, LOGGER
 
-class IntegrationBlueprintApiClientError(Exception):
+
+class BedsteLectioApiClientError(Exception):
     """Exception to indicate a general API error."""
 
 
-class IntegrationBlueprintApiClientCommunicationError(
-    IntegrationBlueprintApiClientError
+class BedsteLectioApiClientCommunicationError(
+    BedsteLectioApiClientError
 ):
     """Exception to indicate a communication error."""
 
 
-class IntegrationBlueprintApiClientAuthenticationError(
-    IntegrationBlueprintApiClientError
+class BedsteLectioApiClientAuthenticationError(
+    BedsteLectioApiClientError
 ):
     """Exception to indicate an authentication error."""
 
 
-class IntegrationBlueprintApiClient:
+class BedsteLectioApiClient:
     """Sample API Client."""
 
     def __init__(
         self,
         username: str,
         password: str,
+        school: str,
         session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
         self._username = username
         self._password = password
+        self._school = school
         self._session = session
 
-    async def async_get_data(self) -> any:
-        """Get data from the API."""
+    async def async_get_next_room(self) -> any:
+        """Get next room from the API."""
         return await self._api_wrapper(
-            method="get", url="https://jsonplaceholder.typicode.com/posts/1"
+            method="get", url=f"{BEDSTELECTIO_API_URL}/ha/frontpage", headers={
+                "brugernavn": self._username,
+                "adgangskode": self._password,
+                "skoleid": self._school,
+            }
         )
 
-    async def async_set_title(self, value: str) -> any:
-        """Get data from the API."""
-        return await self._api_wrapper(
-            method="patch",
-            url="https://jsonplaceholder.typicode.com/posts/1",
-            data={"title": value},
-            headers={"Content-type": "application/json; charset=UTF-8"},
+    async def async_get_schools(self) -> list[str]:
+        """Get schools from the API."""
+        data = await self._api_wrapper(
+            method="get",
+            url=f"{BEDSTELECTIO_API_URL}/skoler",
         )
+        return [school["id"] for school in data]
 
     async def _api_wrapper(
         self,
@@ -69,22 +75,24 @@ class IntegrationBlueprintApiClient:
                     headers=headers,
                     json=data,
                 )
-                if response.status in (401, 403):
-                    raise IntegrationBlueprintApiClientAuthenticationError(
+                if response.status == 500:
+                    LOGGER.error(await response.json())
+                    raise BedsteLectioApiClientAuthenticationError(
                         "Invalid credentials",
                     )
                 response.raise_for_status()
                 return await response.json()
 
         except asyncio.TimeoutError as exception:
-            raise IntegrationBlueprintApiClientCommunicationError(
+            raise BedsteLectioApiClientCommunicationError(
                 "Timeout error fetching information",
             ) from exception
         except (aiohttp.ClientError, socket.gaierror) as exception:
-            raise IntegrationBlueprintApiClientCommunicationError(
+            raise BedsteLectioApiClientCommunicationError(
                 "Error fetching information",
             ) from exception
         except Exception as exception:  # pylint: disable=broad-except
-            raise IntegrationBlueprintApiClientError(
+            LOGGER.exception(exception)
+            raise BedsteLectioApiClientError(
                 "Something really wrong happened!"
             ) from exception
