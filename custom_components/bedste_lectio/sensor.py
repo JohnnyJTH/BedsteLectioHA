@@ -1,3 +1,4 @@
+"""Sensor platforms for BedsteLectio."""
 from __future__ import annotations
 from datetime import datetime
 from dateutil import parser
@@ -56,6 +57,8 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
 
 
 class BedsteLectioSensor(BedsteLectioEntity, SensorEntity):
+    """BedsteLectio Sensor class."""
+
     def __init__(
         self,
         coordinator: BedsteLectioDataUpdateCoordinator,

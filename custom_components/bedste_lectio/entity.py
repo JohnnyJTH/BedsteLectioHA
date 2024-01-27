@@ -1,3 +1,4 @@
+"""BedsteLectioEntity class."""
 from __future__ import annotations
 
 from homeassistant.helpers.entity import DeviceInfo
@@ -8,6 +9,8 @@ from .coordinator import BedsteLectioDataUpdateCoordinator
 
 
 class BedsteLectioEntity(CoordinatorEntity):
+    """BedsteLectioEntity class."""
+
     _attr_attribution = ATTRIBUTION
 
     def __init__(self, coordinator: BedsteLectioDataUpdateCoordinator) -> None:
