@@ -35,7 +35,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 ***
 
-[bedste_lectio]: https://github.com/JohnnyJTH/BedsteLectioHA
+[bedste_lectio]: https://bedstelectio.dk
 [commits-shield]: https://img.shields.io/github/commit-activity/y/JohnnyJTH/BedsteLectioHA.svg?style=for-the-badge
 [commits]: https://github.com/JohnnyJTH/BedsteLectioHA/commits/main
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
