@@ -45,9 +45,9 @@ class BedsteLectioApiClient:
         """Get next room from the API."""
         return await self._api_wrapper(
             method="get", url=f"{BEDSTELECTIO_API_URL}/ha/frontpage", headers={
-                "brugernavn": self._username,
-                "adgangskode": self._password,
-                "skoleid": self._school,
+                "username": self._username,
+                "password": self._password,
+                "school": self._school,
             }
         )
 
