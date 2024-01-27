@@ -25,7 +25,12 @@ Platform | Description
 1. Restart Home Assistant
 1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "BedsteLectio"
 
-## Configuration is done in the UI
+## Configuration
+
+Configuration is done in the UI. You need to provide your username, password and school for BedsteLectio.
+
+You can find your school by logging into Lectio and looking at the URL. It should look something like this:
+`https://www.lectio.dk/lectio/<school_id>/forside.aspx`
 
 <!---->
 
