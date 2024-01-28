@@ -79,4 +79,8 @@ class BedsteLectioSensor(BedsteLectioEntity, SensorEntity):
     def extra_state_attributes(self) -> dict[str, any]:
         """Return the state attributes of the entity."""
         entries = self.coordinator.data.get("skema")
-        return get_next_room(entries)
+        data = get_next_room(entries)
+        data.update({
+            "last_update": datetime.now(),
+        })
+        return data
