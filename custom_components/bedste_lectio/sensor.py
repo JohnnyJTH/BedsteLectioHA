@@ -44,7 +44,7 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
 
     rooms = []
     for entry in entries:
-        date = parser.parse(entry["tidspunkt"].split(" til")[0], fuzzy=True)
+        date = parser.parse(entry["tidspunkt"].split(" til")[0], fuzzy=True).replace(tzinfo=ZoneInfo("Etc/UCT"))
         if date < datetime.now(tz=ZoneInfo("Europe/Copenhagen")):
             continue
 
