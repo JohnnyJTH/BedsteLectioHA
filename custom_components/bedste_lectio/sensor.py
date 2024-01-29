@@ -84,6 +84,6 @@ class BedsteLectioSensor(BedsteLectioEntity, SensorEntity):
         entries = self.coordinator.data.get("skema")
         data = get_next_room(entries)
         data.update({
-            "last_update": datetime.now(),
+            "last_update": datetime.now(tz=ZoneInfo("Europe/Copenhagen")),
         })
         return data
