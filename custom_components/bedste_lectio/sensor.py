@@ -51,7 +51,7 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
         rooms.append({
             "room": entry.get("lokale", "N/A"),
             "activity": entry.get("navn") or entry.get("hold", "N/A"),
-            "activity": entry.get("hold", "N/A"),
+            "class": entry.get("hold", "N/A"),
             "teacher": entry.get("lærer", "N/A"),
             "start": date,
         })
