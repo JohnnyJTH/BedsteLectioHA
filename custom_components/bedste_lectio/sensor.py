@@ -1,6 +1,7 @@
 """Sensor platforms for BedsteLectio."""
 from __future__ import annotations
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from dateutil import parser
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
@@ -36,6 +37,7 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
         return {
             "room": "N/A",
             "activity": "N/A",
+            "class": "N/A",
             "teacher": "N/A",
             "start": "N/A",
         }
@@ -43,12 +45,13 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
     rooms = []
     for entry in entries:
         date = parser.parse(entry["tidspunkt"].split(" til")[0], fuzzy=True)
-        if date < datetime.now():
+        if date < datetime.now(tz=ZoneInfo("Europe/Copenhagen")):
             continue
 
         rooms.append({
             "room": entry.get("lokale", "N/A"),
             "activity": entry.get("navn") or entry.get("hold", "N/A"),
+            "activity": entry.get("hold", "N/A"),
             "teacher": entry.get("lærer", "N/A"),
             "start": date,
         })
