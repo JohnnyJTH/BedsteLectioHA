@@ -1,6 +1,7 @@
 """Sensor platforms for BedsteLectio."""
 from __future__ import annotations
 from datetime import datetime
+import re
 from zoneinfo import ZoneInfo
 from dateutil import parser
 
@@ -44,7 +45,8 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
 
     rooms = []
     for entry in entries:
-        date = parser.parse(entry["tidspunkt"].split(" til")[0], fuzzy=True).replace(tzinfo=ZoneInfo("Europe/Copenhagen"))
+        dt_str =re.sub(r"(?<!\d)(\d)(?!\d)", "0\\1", entry["tidspunkt"].split(" til")[0])
+        date = datetime.strptime(dt_str, "%d/%m-%Y %H:%M").replace(tzinfo=ZoneInfo("Europe/Copenhagen"))
         if date < datetime.now().astimezone(ZoneInfo("Europe/Copenhagen")):
             continue
 
@@ -56,7 +58,16 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
             "start": date,
         })
 
-    return rooms[0] # The first entry is closest to now that hasn't passed
+    if rooms:
+        return rooms[0] # The first entry is closest to now that hasn't passed
+    else:
+        return {
+            "room": "N/A",
+            "activity": "Ingen moduler de næste par dage.",
+            "class": "N/A",
+            "teacher": "N/A",
+            "start": "N/A",
+        }
 
 
 class BedsteLectioSensor(BedsteLectioEntity, SensorEntity):
