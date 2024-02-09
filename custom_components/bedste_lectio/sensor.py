@@ -1,6 +1,6 @@
 """Sensor platforms for BedsteLectio."""
 from __future__ import annotations
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from dateutil import parser
 
@@ -45,7 +45,7 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
     rooms = []
     for entry in entries:
         date = parser.parse(entry["tidspunkt"].split(" til")[0], fuzzy=True).replace(tzinfo=ZoneInfo("Europe/Copenhagen"))
-        if date < datetime.now(tz=ZoneInfo("Europe/Copenhagen")):
+        if date < datetime.now().astimezone(ZoneInfo("Europe/Copenhagen")):
             continue
 
         rooms.append({
@@ -84,6 +84,6 @@ class BedsteLectioSensor(BedsteLectioEntity, SensorEntity):
         entries = self.coordinator.data.get("skema")
         data = get_next_room(entries)
         data.update({
-            "last_update": datetime.now(tz=ZoneInfo("Europe/Copenhagen")),
+            "last_update": datetime.now().astimezone(ZoneInfo("Europe/Copenhagen")),
         })
         return data
