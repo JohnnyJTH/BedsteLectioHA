@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import datetime
 import re
 from zoneinfo import ZoneInfo
-from dateutil import parser
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 
