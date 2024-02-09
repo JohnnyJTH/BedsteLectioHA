@@ -14,15 +14,11 @@ class BedsteLectioApiClientError(Exception):
     """Exception to indicate a general API error."""
 
 
-class BedsteLectioApiClientCommunicationError(
-    BedsteLectioApiClientError
-):
+class BedsteLectioApiClientCommunicationError(BedsteLectioApiClientError):
     """Exception to indicate a communication error."""
 
 
-class BedsteLectioApiClientAuthenticationError(
-    BedsteLectioApiClientError
-):
+class BedsteLectioApiClientAuthenticationError(BedsteLectioApiClientError):
     """Exception to indicate an authentication error."""
 
 
@@ -45,11 +41,13 @@ class BedsteLectioApiClient:
     async def async_get_next_room(self) -> any:
         """Get next room from the API."""
         return await self._api_wrapper(
-            method="get", url=f"{BEDSTELECTIO_API_URL}/ha/frontpage", headers={
+            method="get",
+            url=f"{BEDSTELECTIO_API_URL}/ha/frontpage",
+            headers={
                 "username": self._username,
                 "password": self._password,
                 "school": self._school,
-            }
+            },
         )
 
     async def async_get_schools(self) -> list[str]:

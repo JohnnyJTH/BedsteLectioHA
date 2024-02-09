@@ -14,9 +14,7 @@ from .api import BedsteLectioApiClient
 from .const import CONF_SCHOOL, DOMAIN
 from .coordinator import BedsteLectioDataUpdateCoordinator
 
-PLATFORMS: list[Platform] = [
-    Platform.SENSOR
-]
+PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 
 # https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry

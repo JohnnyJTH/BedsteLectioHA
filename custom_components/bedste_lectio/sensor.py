@@ -45,21 +45,27 @@ def get_next_room(entries: list[dict[str, str]]) -> dict[str, str]:
 
     rooms = []
     for entry in entries:
-        dt_str =re.sub(r"(?<!\d)(\d)(?!\d)", "0\\1", entry["tidspunkt"].split(" til")[0])
-        date = datetime.strptime(dt_str, "%d/%m-%Y %H:%M").replace(tzinfo=ZoneInfo("Europe/Copenhagen"))
+        dt_str = re.sub(
+            r"(?<!\d)(\d)(?!\d)", "0\\1", entry["tidspunkt"].split(" til")[0]
+        )
+        date = datetime.strptime(dt_str, "%d/%m-%Y %H:%M").replace(
+            tzinfo=ZoneInfo("Europe/Copenhagen")
+        )
         if date < datetime.now().astimezone(ZoneInfo("Europe/Copenhagen")):
             continue
 
-        rooms.append({
-            "room": entry.get("lokale", "N/A"),
-            "activity": entry.get("navn") or entry.get("hold", "N/A"),
-            "class": entry.get("hold", "N/A"),
-            "teacher": entry.get("lærer", "N/A"),
-            "start": date,
-        })
+        rooms.append(
+            {
+                "room": entry.get("lokale", "N/A"),
+                "activity": entry.get("navn") or entry.get("hold", "N/A"),
+                "class": entry.get("hold", "N/A"),
+                "teacher": entry.get("lærer", "N/A"),
+                "start": date,
+            }
+        )
 
     if rooms:
-        return rooms[0] # The first entry is closest to now that hasn't passed
+        return rooms[0]  # The first entry is closest to now that hasn't passed
     else:
         return {
             "room": "N/A",
@@ -94,7 +100,9 @@ class BedsteLectioSensor(BedsteLectioEntity, SensorEntity):
         """Return the state attributes of the entity."""
         entries = self.coordinator.data.get("skema")
         data = get_next_room(entries)
-        data.update({
-            "last_update": datetime.now().astimezone(ZoneInfo("Europe/Copenhagen")),
-        })
+        data.update(
+            {
+                "last_update": datetime.now().astimezone(ZoneInfo("Europe/Copenhagen")),
+            }
+        )
         return data

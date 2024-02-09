@@ -86,7 +86,9 @@ class BedsteLectioFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=_errors,
         )
 
-    async def _test_credentials(self, username: str, password: str, school: str) -> None:
+    async def _test_credentials(
+        self, username: str, password: str, school: str
+    ) -> None:
         """Validate credentials."""
         client = BedsteLectioApiClient(
             username=username,
